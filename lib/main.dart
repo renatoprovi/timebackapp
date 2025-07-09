@@ -33,6 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   int usedMinutes = 0;
   bool isLoading = true;
 
+  final List<String> popularApps = [
+    'Instagram',
+    'TikTok',
+    'WhatsApp',
+    'YouTube',
+    'Facebook',
+    'Twitter/X',
+  ];
+
+  Set<String> selectedApps = {};
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       dailyLimit = prefs.getInt('dailyLimit') ?? 60;
       usedMinutes = prefs.getInt('usedMinutes') ?? 0;
+      selectedApps = (prefs.getStringList('selectedApps') ?? []).toSet();
       isLoading = false;
     });
   }
@@ -56,6 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _saveUsedMinutes() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('usedMinutes', usedMinutes);
+  }
+
+  Future<void> _saveSelectedApps() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('selectedApps', selectedApps.toList());
   }
 
   void _incrementUsedMinutes() {
@@ -97,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('TimeBack'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,6 +150,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 40),
+            const Text(
+              'Escolha os apps que deseja limitar:',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            ...popularApps.map((app) {
+              return CheckboxListTile(
+                title: Text(app),
+                value: selectedApps.contains(app),
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (value == true) {
+                      selectedApps.add(app);
+                    } else {
+                      selectedApps.remove(app);
+                    }
+                    _saveSelectedApps();
+                  });
+                },
+              );
+            }).toList(),
+            const SizedBox(height: 30),
             Text(
               'Tempo usado hoje: $usedMinutes minutos',
               style: TextStyle(
@@ -199,4 +238,3 @@ class PenaltyScreen extends StatelessWidget {
     );
   }
 }
-
