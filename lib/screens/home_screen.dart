@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/modo_bloqueio.dart';
 import 'penalty_screen.dart';
+import '../utils/historico_storage.dart';
+import 'historico_screen.dart';
+import 'simulador_screen.dart'; // << NOVO
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int dailyLimit = 60;
   int usedMinutes = 0;
-  int bonusMinutes = 0; // bônus acumulado
+  int bonusMinutes = 0;
   bool isLoading = true;
 
   final List<String> popularApps = [
@@ -70,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       usedMinutes += 5;
     });
     _saveUsedMinutes();
+    HistoricoStorage.salvarUsoHoje(usedMinutes);
   }
 
   Future<String?> _getModoBloqueio() async {
@@ -77,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return prefs.getString('modoBloqueio');
   }
 
-  // Verifica se o dia mudou para resetar uso e aplicar bônus
   Future<void> _checkDailyReset() async {
     final prefs = await SharedPreferences.getInstance();
     final lastDateString = prefs.getString('lastUsageDate');
@@ -85,14 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final todayString = '${now.year}-${now.month}-${now.day}';
 
     if (lastDateString != todayString) {
-      // Se ontem não ultrapassou o limite, dá bônus de 10 minutos
       final yesterdayExceeded = prefs.getBool('yesterdayExceeded') ?? false;
       if (!yesterdayExceeded) {
         bonusMinutes += 10;
         await _saveBonusMinutes();
       }
       await prefs.setBool('yesterdayExceeded', usedMinutes >= dailyLimit);
-      // Reseta usado para 0 no novo dia
       usedMinutes = 0;
       await _saveUsedMinutes();
       await prefs.setString('lastUsageDate', todayString);
@@ -124,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   int extraTime = 30;
                   int currentLimit = prefs.getInt('dailyLimit') ?? 60;
                   await prefs.setInt('dailyLimit', currentLimit + extraTime);
-                  // Após pagar, também zera o uso e bônus
                   usedMinutes = 0;
                   bonusMinutes = 0;
                   await _saveUsedMinutes();
@@ -134,14 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         } else {
-          // Modo Força de Vontade: bloqueia sem alternativa
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
               title: const Text('Limite Excedido'),
-              content: const Text(
-                'Você excedeu seu tempo diário.\nVolte amanhã!',
-              ),
+              content: const Text('Você excedeu seu tempo diário.\nVolte amanhã!'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -157,6 +154,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TimeBack'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Histórico',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const HistoricoScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -185,8 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await _saveDailyLimit();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content:
-                          Text('Limite diário salvo: $dailyLimit minutos'),
+                      content: Text('Limite diário salvo: $dailyLimit minutos'),
                     ),
                   );
                 },
@@ -233,10 +240,26 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: _incrementUsedMinutes,
               child: const Text('Simular +5 minutos de uso'),
             ),
+            const SizedBox(height: 30),
+            Divider(),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SimuladorScreen()),
+                  );
+                },
+                child: const Text(
+                  '🔬 Acessar Simulador de TCC',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
 
