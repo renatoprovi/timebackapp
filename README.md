@@ -26,6 +26,25 @@ Caso ultrapassem o limite diário de uso, uma penalidade voluntária em dinheiro
 
 ---
 
+## Estrutura do projeto
+
+```
+lib/
+├── models/
+│   └── modo_bloqueio.dart
+├── screens/
+│   ├── historico_screen.dart
+│   ├── home_screen.dart
+│   ├── modo_escolha_screen.dart
+│   └── penalty_screen.dart
+├── utils/
+│   └── historico_storage.dart
+└── main.dart
+
+```
+
+---
+
 ## Como rodar o projeto
 
 ### 1. Clone o repositório
