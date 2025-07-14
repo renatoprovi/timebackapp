@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home_screen.dart';
 
+/// Tela de penalidade exibida quando o usuário ultrapassa o limite diário.
+///
+/// Solicita contribuição voluntária para liberar tempo extra.
 class PenaltyScreen extends StatelessWidget {
+  /// Função callback chamada quando o usuário realiza o pagamento da penalidade.
   final Future<void> Function() onPaid;
+
   const PenaltyScreen({super.key, required this.onPaid});
 
+  /// Obtém o valor da penalidade salvo nas preferências, ou retorna padrão 5.0.
   Future<double> _getPenaltyAmount() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('valorPenalidade') ?? 5.0;
@@ -65,3 +71,4 @@ class PenaltyScreen extends StatelessWidget {
     );
   }
 }
+

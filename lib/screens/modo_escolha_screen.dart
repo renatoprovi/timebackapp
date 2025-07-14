@@ -3,6 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/modo_bloqueio.dart';
 import 'home_screen.dart';
 
+/// Tela para o usuário escolher o modo de bloqueio.
+///
+/// Pode escolher entre força de vontade (sem volta) ou modo pago,
+/// onde define valor da penalidade para continuar.
 class ModoEscolhaScreen extends StatefulWidget {
   const ModoEscolhaScreen({super.key});
 
@@ -14,6 +18,9 @@ class _ModoEscolhaScreenState extends State<ModoEscolhaScreen> {
   ModoBloqueio? _modoSelecionado;
   double _valorPenalidade = 5.0;
 
+  /// Salva o modo selecionado e, se for pago, também o valor da penalidade.
+  ///
+  /// Após salvar, navega para a tela principal.
   Future<void> _salvarModo() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('modoBloqueio', _modoSelecionado.toString());

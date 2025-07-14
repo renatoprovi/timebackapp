@@ -49,6 +49,81 @@ lib/
 
 ---
 
+### Diagrama Conceitual do App TimeBack
+
+```bash
++-------------------------+
+|      TimeBack App       |   <-- ponto de entrada: main.dart
++-----------+-------------+
+            |
+            v
++----------------------------+
+| Decidir Tela Inicial       | -- lê 'modoBloqueio' em SharedPreferences
+| (ModoEscolhaScreen ou      |
+|  HomeScreen)               |
++-----------+----------------+
+            |
+            v
++-----------------------------+
+|         ModoEscolhaScreen    |   <-- Configura modo de bloqueio
+| - Escolhe modo:              |
+|   - Força de Vontade         |
+|   - Pago + valor penalidade  |
++-----------+------------------+
+            |
+            v
++-----------------------------+
+|           HomeScreen         |   <-- Tela principal
+| - Configura limite diário    |
+| - Seleciona apps a limitar   |
+| - Mostra uso diário / bônus  |
+| - Simula incremento de uso   |
+| - Botão para Histórico       |
+| - Botão para Simulador TCC   |
++-----------+------------------+
+            |
+            v
++-----------------------------+
+|      AppSelectorGrid Widget  |   <-- Grid de apps com ícones selecionáveis
++-----------------------------+
+
++-----------------------------+
+|       HistóricoScreen        |   <-- Mostra histórico de uso (últimos 7 dias)
+| - Lê dados de SharedPreferences via HistoricoStorage
++-----------------------------+
+
++-----------------------------+
+|        PenaltyScreen         |   <-- Aparece quando limite diário excedido
+| - Informa valor da penalidade|
+| - Permite "pagar" para ganhar|
+|   +30 minutos extras         |
++-----------------------------+
+
++-----------------------------+
+|        SimuladorScreen       |   <-- Ferramenta para testes manuais do estado
+| - Manipula SharedPreferences |
+|   para testar cenários       |
++-----------------------------+
+
++-----------------------------+
+|    HistoricoStorage (util)   |   <-- Classe utilitária para ler/gravar histórico
+| - Armazena uso diário em JSON|
+| - Limita histórico a 7 dias  |
++-----------------------------+
+
++-----------------------------+
+| SharedPreferences (persist)  |   <-- Armazena:
+| - modoBloqueio               |
+| - dailyLimit, usedMinutes    |
+| - bonusMinutes               |
+| - selectedApps               |
+| - histórico de uso           |
+| - valorPenalidade            |
++-----------------------------+
+```
+
+---
+
 ## Como rodar o projeto
 
 ### 1. Clone o repositório
