@@ -6,6 +6,14 @@ import '../utils/historico_storage.dart';
 import 'historico_screen.dart';
 import 'simulador_screen.dart'; // << NOVO
 
+// Classe de modelo local (você pode mover para models/app_info.dart depois)
+class AppInfo {
+  final String nome;
+  final IconData icone;
+
+  AppInfo({required this.nome, required this.icone});
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -19,13 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int bonusMinutes = 0;
   bool isLoading = true;
 
-  final List<String> popularApps = [
-    'Instagram',
-    'TikTok',
-    'WhatsApp',
-    'YouTube',
-    'Facebook',
-    'Twitter/X',
+  final List<AppInfo> popularApps = [
+    AppInfo(nome: 'Instagram', icone: Icons.camera_alt),
+    AppInfo(nome: 'TikTok', icone: Icons.music_note),
+    AppInfo(nome: 'WhatsApp', icone: Icons.chat),
+    AppInfo(nome: 'YouTube', icone: Icons.ondemand_video),
+    AppInfo(nome: 'Facebook', icone: Icons.facebook),
+    AppInfo(nome: 'Twitter/X', icone: Icons.alternate_email),
   ];
 
   Set<String> selectedApps = {};
@@ -206,22 +214,36 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
-            ...popularApps.map((app) {
-              return CheckboxListTile(
-                title: Text(app),
-                value: selectedApps.contains(app),
-                onChanged: (bool? value) {
-                  setState(() {
-                    if (value == true) {
-                      selectedApps.add(app);
-                    } else {
-                      selectedApps.remove(app);
-                    }
-                    _saveSelectedApps();
-                  });
-                },
-              );
-            }).toList(),
+            GridView.count(
+              crossAxisCount: 3,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: popularApps.map((app) {
+                final isSelected = selectedApps.contains(app.nome);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isSelected
+                          ? selectedApps.remove(app.nome)
+                          : selectedApps.add(app.nome);
+                      _saveSelectedApps();
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        app.icone,
+                        size: 40,
+                        color: isSelected ? Colors.red : Colors.grey,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(app.nome, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
             const SizedBox(height: 30),
             Text(
               'Tempo usado hoje: $usedMinutes minutos',
@@ -241,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text('Simular +5 minutos de uso'),
             ),
             const SizedBox(height: 30),
-            Divider(),
+            const Divider(),
             Center(
               child: TextButton(
                 onPressed: () {
@@ -261,5 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 
 
