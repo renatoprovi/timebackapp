@@ -31,14 +31,18 @@ Caso ultrapassem o limite diário de uso, uma penalidade voluntária em dinheiro
 ```
 lib/
 ├── models/
+│   ├── app_info.dart
 │   └── modo_bloqueio.dart
 ├── screens/
 │   ├── historico_screen.dart
 │   ├── home_screen.dart
 │   ├── modo_escolha_screen.dart
-│   └── penalty_screen.dart
+│   ├── penalty_screen.dart
+│   └── simulador_screen.dart
 ├── utils/
 │   └── historico_storage.dart
+├── widgets/
+│   └── app_selector_grid.dart
 └── main.dart
 
 ```
