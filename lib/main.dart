@@ -10,9 +10,17 @@ void main() async {
   runApp(const TimeBackApp());
 }
 
+/// Widget raiz da aplicação TimeBack.
+///
+/// Define os temas claros e escuros, e decide qual tela inicial
+/// exibir baseado nas preferências do usuário.
 class TimeBackApp extends StatelessWidget {
   const TimeBackApp({super.key});
 
+  /// Decide qual tela inicial deve ser exibida.
+  ///
+  /// Retorna [ModoEscolhaScreen] se o modo de bloqueio não estiver configurado,
+  /// caso contrário retorna [HomeScreen].
   Future<Widget> _decidirTelaInicial() async {
     final prefs = await SharedPreferences.getInstance();
     final modo = prefs.getString('modoBloqueio');
@@ -27,8 +35,8 @@ class TimeBackApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TimeBack',
-      debugShowCheckedModeBanner: false, // 👈 Remove o selo DEBUG
-      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false, // Remove o selo DEBUG no modo debug
+      themeMode: ThemeMode.light, // Força o tema claro
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
@@ -59,4 +67,5 @@ class TimeBackApp extends StatelessWidget {
     );
   }
 }
+
 

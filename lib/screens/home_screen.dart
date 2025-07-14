@@ -6,7 +6,7 @@ import '../utils/historico_storage.dart';
 import 'historico_screen.dart';
 import 'simulador_screen.dart'; // << NOVO
 
-// Classe de modelo local (você pode mover para models/app_info.dart depois)
+/// Representa um app popular com nome e ícone para seleção.
 class AppInfo {
   final String nome;
   final IconData icone;
@@ -14,6 +14,10 @@ class AppInfo {
   AppInfo({required this.nome, required this.icone});
 }
 
+/// Tela principal do app TimeBack.
+///
+/// Permite definir o limite diário, selecionar apps para limitar,
+/// mostra tempo usado, bônus e simula uso.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -44,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadData();
   }
 
+  /// Carrega dados salvos nas preferências compartilhadas.
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -56,26 +61,31 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Salva o limite diário nas preferências.
   Future<void> _saveDailyLimit() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('dailyLimit', dailyLimit);
   }
 
+  /// Salva os minutos usados nas preferências.
   Future<void> _saveUsedMinutes() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('usedMinutes', usedMinutes);
   }
 
+  /// Salva os minutos bônus nas preferências.
   Future<void> _saveBonusMinutes() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('bonusMinutes', bonusMinutes);
   }
 
+  /// Salva os apps selecionados nas preferências.
   Future<void> _saveSelectedApps() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('selectedApps', selectedApps.toList());
   }
 
+  /// Incrementa o uso em 5 minutos e salva o valor.
   void _incrementUsedMinutes() {
     setState(() {
       usedMinutes += 5;
@@ -84,11 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
     HistoricoStorage.salvarUsoHoje(usedMinutes);
   }
 
+  /// Obtém o modo de bloqueio salvo.
   Future<String?> _getModoBloqueio() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('modoBloqueio');
   }
 
+  /// Verifica se deve resetar o contador diário e aplicar bônus.
   Future<void> _checkDailyReset() async {
     final prefs = await SharedPreferences.getInstance();
     final lastDateString = prefs.getString('lastUsageDate');
@@ -117,9 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    // Verifica e reseta o uso diário se necessário
     _checkDailyReset();
 
-    bool exceeded = usedMinutes >= (dailyLimit + bonusMinutes);
+    final bool exceeded = usedMinutes >= (dailyLimit + bonusMinutes);
 
     if (exceeded) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -130,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (_) => PenaltyScreen(
                 onPaid: () async {
                   final prefs = await SharedPreferences.getInstance();
-                  int extraTime = 30;
-                  int currentLimit = prefs.getInt('dailyLimit') ?? 60;
+                  const int extraTime = 30;
+                  final int currentLimit = prefs.getInt('dailyLimit') ?? 60;
                   await prefs.setInt('dailyLimit', currentLimit + extraTime);
                   usedMinutes = 0;
                   bonusMinutes = 0;
@@ -219,13 +232,15 @@ class _HomeScreenState extends State<HomeScreen> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               children: popularApps.map((app) {
-                final isSelected = selectedApps.contains(app.nome);
+                final bool isSelected = selectedApps.contains(app.nome);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      isSelected
-                          ? selectedApps.remove(app.nome)
-                          : selectedApps.add(app.nome);
+                      if (isSelected) {
+                        selectedApps.remove(app.nome);
+                      } else {
+                        selectedApps.add(app.nome);
+                      }
                       _saveSelectedApps();
                     });
                   },
@@ -253,8 +268,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontWeight: exceeded ? FontWeight.bold : FontWeight.normal,
               ),
             ),
+            const Text(
+              'Bônus acumulado: ',
+              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+            ),
             Text(
-              'Bônus acumulado: $bonusMinutes minutos',
+              '$bonusMinutes minutos',
               style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 20),
@@ -283,6 +302,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-

@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Tela que permite simular diferentes cenários para teste do app.
+///
+/// Permite alterar tempo usado, bônus, modo de bloqueio, simular novo dia
+/// e resetar todos os dados de forma manual.
 class SimuladorScreen extends StatelessWidget {
   const SimuladorScreen({super.key});
 
+  /// Atualiza o tempo usado armazenado nas preferências.
   Future<void> _setUsedMinutes(int minutes) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('usedMinutes', minutes);
   }
 
+  /// Atualiza os minutos de bônus armazenados nas preferências.
   Future<void> _setBonusMinutes(int minutes) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('bonusMinutes', minutes);
   }
 
+  /// Define o modo de bloqueio atual nas preferências.
   Future<void> _setModoBloqueio(String modo) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('modoBloqueio', modo);
   }
 
+  /// Simula um novo dia, atualizando data de último uso e se ultrapassou limite ontem.
   Future<void> _setNewDay({bool ultrapassouOntem = false}) async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now().subtract(const Duration(days: 1));
@@ -27,6 +35,7 @@ class SimuladorScreen extends StatelessWidget {
     await prefs.setBool('yesterdayExceeded', ultrapassouOntem);
   }
 
+  /// Limpa todas as preferências salvas.
   Future<void> _clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -99,3 +108,4 @@ class SimuladorScreen extends StatelessWidget {
     );
   }
 }
+

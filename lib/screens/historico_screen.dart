@@ -1,7 +1,10 @@
-// lib/screens/historico_screen.dart
 import 'package:flutter/material.dart';
 import '../utils/historico_storage.dart';
 
+/// Tela que exibe o histórico de uso diário dos minutos consumidos.
+///
+/// Mostra uma lista com as datas e o tempo usado, indicando se o uso
+/// ficou dentro do limite permitido.
 class HistoricoScreen extends StatefulWidget {
   const HistoricoScreen({super.key});
 
@@ -16,10 +19,13 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
   @override
   void initState() {
     super.initState();
-    carregar();
+    _carregarHistorico();
   }
 
-  Future<void> carregar() async {
+  /// Carrega os dados do histórico de uso armazenados.
+  ///
+  /// Atualiza o estado da tela com os dados carregados.
+  Future<void> _carregarHistorico() async {
     final dados = await HistoricoStorage.carregarHistorico();
     setState(() {
       historico = dados;
@@ -43,6 +49,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
           final data = entry.key;
           final minutos = entry.value;
           final dentroLimite = minutos <= 60;
+
           return ListTile(
             title: Text('📅 $data'),
             subtitle: Text('$minutos minutos usados'),
