@@ -1,0 +1,21 @@
+{
+  "name": "timeback-diagrams-generator",
+  "version": "1.0.0",
+  "description": "Script para gerar diagramas PNG do projeto TimeBack App",
+  "main": "generate_diagrams.js",
+  "scripts": {
+    "generate": "node generate_diagrams.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "keywords": [
+    "mermaid",
+    "diagrams",
+    "flutter",
+    "timeback"
+  ],
+  "author": "TimeBack App Team",
+  "license": "MIT"
+}
