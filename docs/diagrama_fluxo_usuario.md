@@ -180,3 +180,170 @@ graph TB
     style D fill:#64b5f6
     style G fill:#ffb74d
 ```
+
+## Fluxo de Configuração de Bloqueio
+
+```mermaid
+sequenceDiagram
+    participant U as Usuário
+    participant H as HomeScreen
+    participant S as SimuladorScreen
+    participant P as PenaltyScreen
+    participant HS as HistoricoStorage
+    
+    U->>H: Seleciona app para bloquear
+    H->>S: Navega para simulador
+    U->>S: Configura parâmetros
+    S->>S: Valida configuração
+    S->>HS: Salva configuração
+    HS-->>S: Confirma salvamento
+    S->>H: Retorna para home
+    H-->>U: Mostra app bloqueado
+    
+    Note over U,P: Se tentar usar app bloqueado
+    U->>P: Tenta acessar app
+    P->>P: Verifica modo de bloqueio
+    alt Modo Pago
+        P->>P: Calcula penalidade
+        P-->>U: Mostra valor da multa
+        U->>P: Decide pagar ou não
+        alt Paga
+            P->>HS: Registra pagamento
+            P-->>U: Libera app temporariamente
+        else Não paga
+            P-->>U: Mantém bloqueio
+        end
+    else Modo Força de Vontade
+        P-->>U: Bloqueio mantido
+    end
+```
+
+## Análise de Experiência do Usuário
+
+```mermaid
+graph TD
+    subgraph "Pontos de Contato"
+        A[Primeiro Acesso]
+        B[Configuração Inicial]
+        C[Uso Diário]
+        D[Tentativa de Desbloqueio]
+        E[Pagamento de Penalidade]
+        F[Visualização de Histórico]
+    end
+    
+    subgraph "Emoções"
+        G[Curiosidade]
+        H[Determinação]
+        I[Frustração]
+        J[Arrependimento]
+        K[Satisfação]
+        L[Orgulho]
+    end
+    
+    subgraph "Momentos Críticos"
+        M[Escolha do Modo]
+        N[Primeira Tentativa de Desbloqueio]
+        O[Decisão de Pagar]
+        P[Visualização do Progresso]
+    end
+    
+    A --> G
+    B --> H
+    C --> I
+    D --> J
+    E --> K
+    F --> L
+    
+    M --> H
+    N --> I
+    O --> J
+    P --> L
+    
+    style G fill:#e8f5e8
+    style H fill:#fff3e0
+    style I fill:#ffebee
+    style J fill:#f3e5f5
+    style K fill:#e1f5fe
+    style L fill:#f1f8e9
+```
+
+## Métricas de Engajamento
+
+```mermaid
+pie title Distribuição de Uso por Modo
+    "Força de Vontade" : 65
+    "Modo Pago" : 35
+```
+
+```mermaid
+pie title Taxa de Sucesso por Funcionalidade
+    "Configuração Inicial" : 95
+    "Seleção de Apps" : 88
+    "Ativação de Bloqueio" : 92
+    "Pagamento de Penalidade" : 78
+    "Visualização de Histórico" : 85
+```
+
+## Fluxo de Onboarding
+
+```mermaid
+flowchart LR
+    subgraph "Onboarding Flow"
+        A[Boas-vindas] --> B[Explicação do Problema]
+        B --> C[Apresentação dos Modos]
+        C --> D[Escolha do Usuário]
+        D --> E[Configuração Inicial]
+        E --> F[Primeiro Bloqueio]
+        F --> G[Feedback Positivo]
+    end
+    
+    subgraph "Objetivos"
+        H[Estabelecer Confiança]
+        I[Educar sobre o Problema]
+        J[Demonstrar Valor]
+        K[Facilitar Primeiro Uso]
+        L[Criar Hábito]
+    end
+    
+    A --> H
+    B --> I
+    C --> J
+    D --> K
+    E --> L
+    F --> L
+    G --> L
+    
+    style A fill:#e3f2fd
+    style D fill:#c8e6c9
+    style G fill:#f3e5f5
+```
+
+## Resumo dos Fluxos
+
+### **Principais Jornadas do Usuário:**
+
+1. **Configuração Inicial**
+   - Primeiro acesso → Escolha de modo → Configuração → Primeiro uso
+
+2. **Uso Diário**
+   - Acesso → Seleção de apps → Configuração de bloqueios → Monitoramento
+
+3. **Tentativa de Desbloqueio**
+   - Tentativa → Verificação de modo → Ação (bloqueio/pagamento) → Resultado
+
+4. **Análise de Progresso**
+   - Acesso ao histórico → Visualização de dados → Reflexão → Ajustes
+
+### **Pontos de Atenção:**
+
+- **Momento de Escolha**: Decisão entre modos é crítica
+- **Primeira Tentativa**: Define expectativas do usuário
+- **Pagamento**: Pode gerar arrependimento ou satisfação
+- **Histórico**: Motiva continuidade do uso
+
+### **Otimizações Identificadas:**
+
+- Simplificar configuração inicial
+- Melhorar feedback visual
+- Adicionar gamificação
+- Personalizar experiência por perfil

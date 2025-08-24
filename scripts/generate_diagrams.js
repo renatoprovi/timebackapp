@@ -102,7 +102,7 @@ classDiagram
     class AppInfo {
         +String nome
         +IconData icone
-        +AppInfo({required String nome, required IconData icone})
+        +AppInfo(nome, icone)
     }
     
     class ModoBloqueio {
